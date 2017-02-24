@@ -12,16 +12,38 @@ and test functions
 import numpy as np
 import mytrainer
 
-def train(trainX, trainY):
+def sigmoid(z):
+    return 1.0/(1.0+np.exp(-z))
+
+def feedforward( activation,weights,biases):
+        #print activation.shape
+        zs=[]
+        As=[]
+        for i in range(0,2):
+            w=weights[i]
+            b = biases[i]
+            #print activation.shape
+            #print w.shape
+            z=np.dot(w,activation)+b
+            #bigfloat.exp(5000,bigfloat.precision(100))
+            activation = sigmoid(z)
+            As.append(activation)
+            zs.append(z)
+        #print(np.argmax(As[-1]))
+        return As[-1]
+def train( training_data, test_data):
     '''
     Complete this function.
     '''
-    training_data, test_data = mytrainer.load_data_format()
     net = mytrainer.neural_net([784, 30, 10])
-    net.create_mini_batches(training_data, 30, 10, 3.0, test_data=test_data)
-
+    biases,weights = net.create_mini_batches(training_data,test_data=test_data)
+    np.save('weight1.npy', weights[0]) 
+    np.save('weight2.npy', weights[1]) 
+    biases[0].reshape(30,1)
+    biases[1].reshape(10,1)
+    np.save('bias1.npy', biases[0]) 
+    np.save('bias2.npy', biases[1]) 
     
-
 
 def test(testX):
     '''
@@ -33,5 +55,21 @@ def test(testX):
     of the array should contain the label of the i-th test
     example.
     '''
-    accuracy,result = mytrainer.testFunction(test_data)
-    return result
+    w1 =  np.load('weight1.npy')
+    w2 =  np.load('weight2.npy')
+    b1 =  np.load('bias1.npy')
+    b2 =  np.load('bias2.npy')
+
+    weights = [w1,w2]
+    biases =[b1,b2]
+    results =[]
+    count =0
+    for (x,y) in testX:
+        result_a = feedforward(x,weights,biases)
+        result = np.argmax(result_a)
+        if(result == y):
+            count =count+1
+        results.append(result)
+    print (count*1.0)/100
+    return results
+    

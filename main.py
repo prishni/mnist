@@ -106,10 +106,12 @@ def main():
     print "\nDigit sample"
     print_digit(trainX[1], trainY[1])
 
-    train.train(trainX, trainY)
-    labels = train.test(testX)
-    accuracy = np.mean((labels == testY)) * 100.0
-    print "\nTest accuracy: %lf%%" % accuracy
+    training_data, test_data = mytrainer.load_data_format()
+    #train.train(trainX, trainY)
+    train.train(training_data, test_data)
+    labels = train.test(test_data)
+    #accuracy = np.sum((labels == test_data[1])) 
+    #print "\nTest accuracy: %lf%%" % accuracy
 
 
 if __name__ == '__main__':

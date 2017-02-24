@@ -10,23 +10,36 @@ def load_data():
     f = gzip.open('../data/mnist.pkl.gz', 'rb')
     training_data, validation_data, test_data = cPickle.load(f)
     f.close()
-    return (training_data, validation_data, test_data)
+    return (training_data, test_data)
 
 def load_data_format():
-    tr_d, va_d, te_d = load_data()
+    tr_d, te_d = load_data()
     training_inputs = [np.reshape(x, (784, 1)) for x in tr_d[0]]
     training_results = [vectorized_result(y) for y in tr_d[1]]
     training_data = zip(training_inputs, training_results)
-    validation_inputs = [np.reshape(x, (784, 1)) for x in va_d[0]]
-    validation_data = zip(validation_inputs, va_d[1])
     test_inputs = [np.reshape(x, (784, 1)) for x in te_d[0]]
     test_data = zip(test_inputs, te_d[1])
-    return (training_data, validation_data, test_data)
+    return (training_data, test_data)
 
 def vectorized_result(y):
     yp = np.zeros((10, 1))
     yp[y] = 1.0
     return yp
+
+def feed_forward(activation):
+        
+        zs=[]
+        As=[]
+        for i in range(0,2):
+            w=self.weights[i]
+            b = self.biases[i]
+            z=np.dot(w,activation)+b
+            #bigfloat.exp(5000,bigfloat.precision(100))
+            activation = sigmoid(z)
+            As.append(activation)
+            zs.append(z)
+        #print(np.argmax(As[-1]))
+        return As[-1]
 
 class neural_net(object):
 
@@ -94,6 +107,7 @@ class neural_net(object):
             else:
                 pass
             #k = k+ mini_batch_size
+        return self.biases,self.weights
 
     def update_mini_batch(self,mini_batch, eta):
         
@@ -167,17 +181,20 @@ class neural_net(object):
     	count=0
         results =[]
     	for (x, y) in test_data:
-    		result_a = self.feedforward(x)
-    		result = np.argmax(result_a)
+            result_a = self.feedforward(x)
+            result = np.argmax(result_a)
             results.append(result)
-        	if(result == y):
-        		count = count+1
+            if(result == y):
+                count = count+1
         return count,results
-
+'''
+Input:- numpy array wx+b
+calculates sigmoid of the input
+'''
 def sigmoid(z):
     return 1.0/(1.0+np.exp(-z))
 
-training_data, v_data,test_data = load_data_format()
+'''training_data, v_data,test_data = load_data_format()
 net = neural_net([784, 30, 10])
-net.create_mini_batches(training_data, test_data=test_data)
+net.create_mini_batches(training_data, test_data=test_data)'''
 
