@@ -4,30 +4,9 @@ import numpy as np
 import cPickle
 import gzip
 
-'''Loader downloaded from
-    neural network and deep learning book chap 1'''
-def load_data():
-    f = gzip.open('../data/mnist.pkl.gz', 'rb')
-    training_data, validation_data, test_data = cPickle.load(f)
-    f.close()
-    return (training_data, test_data)
-
-def load_data_format():
-    tr_d, te_d = load_data()
-    training_inputs = [np.reshape(x, (784, 1)) for x in tr_d[0]]
-    training_results = [vectorized_result(y) for y in tr_d[1]]
-    training_data = zip(training_inputs, training_results)
-    test_inputs = [np.reshape(x, (784, 1)) for x in te_d[0]]
-    test_data = zip(test_inputs, te_d[1])
-    return (training_data, test_data)
-
-def vectorized_result(y):
-    yp = np.zeros((10, 1))
-    yp[y] = 1.0
-    return yp
 
 def feed_forward(activation):
-        
+        '''Compute the feedforward neural network output'''
         zs=[]
         As=[]
         for i in range(0,2):
@@ -44,6 +23,7 @@ def feed_forward(activation):
 class neural_net(object):
 
     def __init__(self, sizes):
+        '''Initialise neural network with one hidden layer. Weights initialised randomly'''
         np.random.seed(100)
         self.num_layers = len(sizes)
         self.sizes = sizes
@@ -57,7 +37,7 @@ class neural_net(object):
             self.weights.append(weight)
 
     def feedforward(self, activation):
-        
+        '''Feedforward computation'''
         zs=[]
         As=[]
         for i in range(0,2):
@@ -85,10 +65,12 @@ class neural_net(object):
             zs.append(z)
         #print(np.argmax(As[-1]))
         return zs,As
+
     def create_mini_batches(self, training_data, test_data):
-    	epochs =30
+        epochs =30                 #Number of iterations = 30
+        I=1             
     	mini_batch_size =10
-    	eta =3.0
+    	eta =3.0                   #Learning rate
         if test_data: n_test = len(test_data)
         n = len(training_data)
         for j in xrange(epochs):
@@ -102,7 +84,8 @@ class neural_net(object):
             for mini_batch in mini_batches:
                 self.update_mini_batch(mini_batch, eta)
             if test_data:
-                print("next")
+                print(str(I) + " Iterating...")
+                I =I+1
                 self.testFunction(test_data)
             else:
                 pass
@@ -110,7 +93,7 @@ class neural_net(object):
         return self.biases,self.weights
 
     def update_mini_batch(self,mini_batch, eta):
-        
+        '''Compute error for each mini batch and update weights at the end. Mini batch size = 10'''
         newbias =[]
         newweight=[]
         for b in  self.biases:
@@ -145,8 +128,9 @@ class neural_net(object):
             new_final_biases.append(bias1)
         self.biases = new_final_biases
 
+
     def backprop(self, x, y):
-        
+        '''Backpropagate the error for each training example'''
         update_bias =[]
         update_weight=[]
         for b in  self.biases:

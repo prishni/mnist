@@ -9,7 +9,11 @@ Complete the functions in this file.
 Note: Do not change the function signatures of the train
 and test functions
 '''
+
+#Standard Library
 import numpy as np
+
+#Import network class file
 import mytrainer
 
 def sigmoid(z):
@@ -35,14 +39,17 @@ def train( training_data, test_data):
     '''
     Complete this function.
     '''
-    net = mytrainer.neural_net([784, 30, 10])
+    net = mytrainer.neural_net([784, 35, 10])       #30 units in the hidden layer
+    '''Training the network'''
     biases,weights = net.create_mini_batches(training_data,test_data=test_data)
-    np.save('weight1.npy', weights[0]) 
-    np.save('weight2.npy', weights[1]) 
-    biases[0].reshape(30,1)
+
+    '''Save weights to the file'''
+    np.save('./weights/weight1.npy', weights[0]) 
+    np.save('./weights/weight2.npy', weights[1]) 
+    biases[0].reshape(35,1)
     biases[1].reshape(10,1)
-    np.save('bias1.npy', biases[0]) 
-    np.save('bias2.npy', biases[1]) 
+    np.save('./weights/bias1.npy', biases[0]) 
+    np.save('./weights/bias2.npy', biases[1]) 
     
 
 def test(testX):
@@ -55,11 +62,14 @@ def test(testX):
     of the array should contain the label of the i-th test
     example.
     '''
-    w1 =  np.load('weight1.npy')
-    w2 =  np.load('weight2.npy')
-    b1 =  np.load('bias1.npy')
-    b2 =  np.load('bias2.npy')
 
+    '''Read weights from the folder'''
+    w1 =  np.load('./weights/weight1.npy')
+    w2 =  np.load('./weights/weight2.npy')
+    b1 =  np.load('./weights/bias1.npy')
+    b2 =  np.load('./weights/bias2.npy')
+
+    '''Do feedforward computation on test data and report accuracy'''
     weights = [w1,w2]
     biases =[b1,b2]
     results =[]
@@ -70,6 +80,6 @@ def test(testX):
         if(result == y):
             count =count+1
         results.append(result)
-    print (count*1.0)/100
+    print str((count*1.0)/100) + "%"
     return results
     

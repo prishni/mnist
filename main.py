@@ -1,8 +1,8 @@
 '''
 Deep Learning Programming Assignment 1
 --------------------------------------
-Name:
-Roll No.:
+Name: Prishni Rateria
+Roll No.: 16CS60R58
 
 
 ======================================
@@ -54,6 +54,11 @@ import os
 import train
 import mytrainer
 
+def vectorized_result(y):
+    yp = np.zeros((10, 1))
+    yp[y] = 1.0
+    return yp
+
 def load_mnist():
     data_dir = '../data'
 
@@ -86,6 +91,22 @@ def load_mnist():
 
     return trX, trY, teX, teY
 
+def load_data_format():
+    trX, trY, teX, teY = load_mnist()
+
+    '''Normalise image data'''
+    trX = trX*1.0/255
+    teX = teX*1.0/255
+
+    tr_d = (trX, trY)
+    te_d = (teX, teY)
+    #tr_d, te_d = load_data()
+    training_inputs = [np.reshape(x, (784, 1)) for x in tr_d[0]]
+    training_results = [vectorized_result(y) for y in tr_d[1]]
+    training_data = zip(training_inputs, training_results)
+    test_inputs = [np.reshape(x, (784, 1)) for x in te_d[0]]
+    test_data = zip(test_inputs, te_d[1])
+    return (training_data, test_data)
 
 def print_digit(digit_pixels, label='?'):
     for i in range(28):
@@ -106,13 +127,13 @@ def main():
     print "\nDigit sample"
     print_digit(trainX[1], trainY[1])
 
-    training_data, test_data = mytrainer.load_data_format()
-    #train.train(trainX, trainY)
+    '''Train the network'''
+    training_data, test_data = load_data_format()
     train.train(training_data, test_data)
+    
+    '''Test the network'''
     labels = train.test(test_data)
-    #accuracy = np.sum((labels == test_data[1])) 
-    #print "\nTest accuracy: %lf%%" % accuracy
-
+ 
 
 if __name__ == '__main__':
     main()
